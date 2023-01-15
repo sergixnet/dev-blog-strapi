@@ -17,16 +17,13 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
 
   // Method 2: Wrapping a core action (leaves core logic in place)
   async find(ctx) {
-    // some custom logic here
-    ctx.query = { ...ctx.query, local: 'en' }
-
-    // Calling the default core action
+    // fetch all the posts
     const { data, meta } = await super.find(ctx);
 
-    // some more custom logic
-    meta.date = Date.now()
+    if (ctx.state.user) return { data, meta }
 
-    return { data, meta };
+    const filteredData = data.filter((post) => !post.attributes.premium);
+    return { data: filteredData, meta }
   },
 
   // Method 3: Replacing a core action
