@@ -3,6 +3,7 @@
  */
 
 import { factories } from '@strapi/strapi'
+import { Context } from 'koa';
 
 export default factories.createCoreController('api::post.post', ({ strapi }) => ({
   // Method 1: Creating an entirely custom action
@@ -27,18 +28,20 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
   // },
 
   // Solution 2: rewrite the action to fetch only needed posts
-  async find(ctx) {
+  async find(ctx: Context) {
     // if the request is authenticated
-    // const isRequestingNonPremium = ctx.query.filters && ctx.query.filters.premium == false;
-    console.log(ctx.params);
-    
-    if (ctx.state.user) return await super.find(ctx);
+    const isRequestingNonPremium = ctx.query.filters && (ctx.query.filters as any).premium["$eq"] == "false";
+    if (ctx.state.user || isRequestingNonPremium) return await super.find(ctx);
 
     // if the request is public ...
     // let's  call the underlying service with an additional filter: premium == false
     // /posts?filters[premium]=false
+    const { query } = ctx;
+    const filters = query.filters;
     const filteredPosts = await strapi.service('api::post.post').find({
+      ...query,
       filters: {
+        ...filters as object,
         premium: false
       }
     })
