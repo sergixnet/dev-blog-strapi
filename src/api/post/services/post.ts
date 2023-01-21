@@ -54,5 +54,27 @@ export default factories.createCoreService('api::post.post', ({ strapi }) => ({
     const post = await strapi.entityService.findOne('api::post.post', id, this.getFetchParams(query));
 
     return post.premium ? null : post;
+  },
+
+  async likePost(args: { postId: number, userId: number, query: object }) {
+    const { userId, postId, query } = args;
+
+    const postToLike = await strapi.entityService.findOne('api::post.post', postId, {
+      populate: ['likedBy']
+    });
+
+    if (!postToLike) {
+      return null;
+    }
+    
+
+    const updatedPost = await strapi.entityService.update('api::post.post', postId, {
+      data: {
+        likedBy: [...postToLike.likedBy, userId]
+      },
+      ...query
+    });
+
+    return updatedPost;
   }
 }));
