@@ -66,13 +66,14 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
   },
 
   // Method 3: Replacing a core action
-  async findOne(ctx) {
+  async findOne(ctx: Context) {
+    if (ctx.state.user) return await super.findOne(ctx);
+
     const { id } = ctx.params;
     const { query } = ctx;
 
-    const entity = await strapi.service('api::post.post').findOne(id, query);
-    const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
-
-    return this.transformResponse(sanitizedEntity);
+    const postIfPublic = await strapi.service('api::post.post').findOneIfPublic({ id, query });
+    const sanitizedEntity = await this.sanitizeOutput(postIfPublic, ctx);
+    return this.transformResponse(sanitizedEntity)
   }
 }));
