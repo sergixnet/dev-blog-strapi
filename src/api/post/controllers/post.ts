@@ -28,6 +28,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
   // },
 
   // Solution 2: rewrite the action to fetch only needed posts
+  /*
   async find(ctx: Context) {
     // if the request is authenticated
     const isRequestingNonPremium = ctx.query.filters && (ctx.query.filters as any).premium["$eq"] == "false";
@@ -47,6 +48,19 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
     })
 
     const sanitizedPosts = await this.sanitizeOutput(filteredPosts, ctx);
+
+    return this.transformResponse(sanitizedPosts);
+  },
+  */
+
+  async find(ctx: Context) {
+    // if the request is authenticated
+    const isRequestingNonPremium = ctx.query.filters && (ctx.query.filters as any).premium["$eq"] == "false";
+    if (ctx.state.user || isRequestingNonPremium) return await super.find(ctx);
+
+    // if the request is public
+    const publicPosts = await strapi.service('api::post.post').findPublic(ctx.query);
+    const sanitizedPosts = await this.sanitizeOutput(publicPosts, ctx);
 
     return this.transformResponse(sanitizedPosts);
   },
