@@ -18,7 +18,7 @@ export default {
     // we listen to lifecycle events
     strapi.db.lifecycles.subscribe({
       models: ['admin::user'], // only listen to events for this model
-      afterCreate: async ({ result }) => {
+      async afterCreate({ result }) {
         // create an Author instance from the fields of the Admin User
         // that has just been created
 
@@ -37,7 +37,7 @@ export default {
           }
         })
       },
-      afterUpdate: async ({ result }) => {
+      async afterUpdate({ result }) {
         // get ID of the author tha corresponds
         // to the Admin User that's been just updated
         const correspondingAuthor = (await strapi.service('api::author.author').find({
