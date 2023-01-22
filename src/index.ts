@@ -36,6 +36,22 @@ export default {
             admin_user: [id]
           }
         })
+      },
+      afterUpdate: async ({ result }) => {
+        // get ID of the author tha corresponds
+        // to the Admin User that's been just updated
+        const correspondingAuthor = (await strapi.service('api::author.author').find({
+          admin_user: [result.id]
+        })).results[0]; //reults
+
+        // update the author accordingly
+        const { firstname, lastname, email, username, updatedAt } = result;
+
+        await strapi.service('api::author.author').update(correspondingAuthor.id, {
+          data: {
+            firstname, lastname, email, username, updatedAt
+          }
+        })
       }
     })
 
