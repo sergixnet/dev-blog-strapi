@@ -3,6 +3,22 @@ import { Strapi } from "@strapi/strapi";
 import axios from "axios";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
+  async getProjectForRepo(repo) {
+    const { id } = repo;
+    const matchingProjects = await strapi.entityService.findMany(
+      "plugin::github-projects.project",
+      {
+        filters: {
+          repositoryId: id,
+        },
+      }
+    );
+
+    if (matchingProjects.length == 1) return matchingProjects[0].id;
+
+    return null;
+  },
+
   async getPublicRepos() {
     const result = await request("GET /user/repos", {
       headers: {
@@ -22,21 +38,30 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
         try {
           const response = await axios.get(readmeUrl);
-          console.log({response});
 
           if (response.status === 200) {
             longDescription = response.data;
           }
         } catch (err) {
-          console.log(err);
+          console.log(err.response.status, err.response.statusText);
         }
 
-        return {
+        const repo = {
           id,
           name,
           shortDescription: description,
           url: html_url,
           longDescription,
+        };
+
+        const relatedProjectId = await strapi
+          .plugin("github-projects")
+          .service("getReposService")
+          .getProjectForRepo(repo);
+
+        return {
+          ...repo,
+          projectId: relatedProjectId,
         };
       })
     ).catch((error) => {

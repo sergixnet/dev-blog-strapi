@@ -12,6 +12,7 @@ export default {
   attributes: {
     repositoryId: {
       type: "uid",
+      unique: true,
     },
     title: {
       type: "string",
