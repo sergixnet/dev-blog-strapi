@@ -27,7 +27,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           if (response.status === 200) {
             longDescription = response.data;
           }
-
         } catch (err) {
           console.log(err);
         }
