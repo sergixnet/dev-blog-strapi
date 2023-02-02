@@ -1,6 +1,9 @@
 import { request } from "@octokit/request";
 import { Strapi } from "@strapi/strapi";
 import axios from "axios";
+import MarkdownIt from "markdown-it";
+
+const md = new MarkdownIt();
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getProjectForRepo(repo) {
@@ -40,10 +43,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const response = await axios.get(readmeUrl);
 
           if (response.status === 200) {
-            longDescription = response.data;
+            longDescription = md
+              .render(response.data)
+              .replaceAll("\n", "<br/>");
           }
         } catch (err) {
-          console.log(err.response.status, err.response.statusText);
+          console.log('TODO: handle the error');
         }
 
         const repo = {
