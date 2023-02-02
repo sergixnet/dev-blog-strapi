@@ -1,5 +1,5 @@
-import myController from './my-controller';
+import getReposController from './get-repos-controller';
 
 export default {
-  myController,
+  getReposController,
 };

@@ -1,5 +1,5 @@
-import myService from './my-service';
+import getReposService from './get-repos-service';
 
 export default {
-  myService,
+  getReposService,
 };
