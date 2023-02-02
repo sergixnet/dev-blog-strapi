@@ -11,10 +11,10 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-graphql": "^4.5.6",
-    "@strapi/plugin-i18n": "4.5.6",
-    "@strapi/plugin-users-permissions": "4.5.6",
-    "@strapi/strapi": "4.5.6",
+    "@strapi/plugin-graphql": "^4.6.0",
+    "@strapi/plugin-i18n": "4.6.0",
+    "@strapi/plugin-users-permissions": "4.6.0",
+    "@strapi/strapi": "4.6.0",
     "better-sqlite3": "7.4.6",
     "koa": "^2.14.1",
     "patch-package": "^6.5.1"
