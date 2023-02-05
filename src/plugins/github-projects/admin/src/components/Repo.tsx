@@ -69,7 +69,15 @@ const Repo = () => {
     );
   }
 
-  if (loading) return <Loader />;
+  const loaderStyles = {
+    margin: "auto",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+  };
+
+  if (loading) return <Loader style={loaderStyles} />;
 
   console.log(repos);
 
