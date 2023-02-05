@@ -37,6 +37,7 @@ const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
+  const [selectedRepos, setSelectedRepos] = useState<number[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -81,13 +82,27 @@ const Repo = () => {
 
   console.log(repos);
 
+  const allChecked = selectedRepos.length === repos.length;
+  const isIndeterminate = selectedRepos.length > 0 && !allChecked; // some repo selected, but not all
+
   return (
     <Box padding={8} background="neutral100">
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
             <Th>
-              <BaseCheckbox aria-label="Select all entries" />
+              <BaseCheckbox
+                aria-label="Select all entries"
+                value={allChecked}
+                indeterminate={isIndeterminate}
+                onValueChange={(value) =>
+                  value
+                    ? setSelectedRepos(
+                        repos.map((repo: RepoInterface) => repo.id)
+                      )
+                    : setSelectedRepos([])
+                }
+              />
             </Th>
             <Th>
               <Typography variant="sigma">Name</Typography>
@@ -104,7 +119,7 @@ const Repo = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {repos.map((repo) => {
+          {repos.map((repo: RepoInterface) => {
             console.log(repo);
 
             const { id, name, shortDescription, url, projectId } = repo;
@@ -112,7 +127,17 @@ const Repo = () => {
             return (
               <Tr key={id}>
                 <Td>
-                  <BaseCheckbox aria-label={`Select ${id}`} />
+                  <BaseCheckbox
+                    aria-label={`Select ${id}`}
+                    value={selectedRepos.includes(repo.id)}
+                    onValueChange={(value) => {
+                      const newSelectedRepos = value
+                        ? [...selectedRepos, id]
+                        : selectedRepos.filter((item) => item !== id);
+
+                      setSelectedRepos(newSelectedRepos);
+                    }}
+                  />
                 </Td>
                 <Td>
                   <Typography textColor="neutral800">{name}</Typography>
