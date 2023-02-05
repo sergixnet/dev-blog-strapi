@@ -16,7 +16,7 @@ import {
   Th,
   Typography,
 } from "@strapi/design-system";
-import { Pencil, Trash } from "@strapi/icons";
+import { Pencil, Plus, Trash } from "@strapi/icons";
 import axios from "../utils/axiosInstance";
 
 interface RepoInterface {
@@ -122,22 +122,35 @@ const Repo = () => {
                   </Typography>
                 </Td>
                 <Td>
-                  <Flex>
+                  {projectId ? (
+                    <Flex>
+                      <Link
+                        to={`/content-manager/collectionType/plugin::github-projects.project/${projectId}`}
+                      >
+                        <IconButton
+                          onClick={() => console.log("edit")}
+                          label="Edit"
+                          noBorder
+                          icon={<Pencil />}
+                        />
+                      </Link>
+                      <Box paddingLeft={1}>
+                        <IconButton
+                          onClick={() => console.log("delete")}
+                          label="Delete"
+                          noBorder
+                          icon={<Trash />}
+                        />
+                      </Box>
+                    </Flex>
+                  ) : (
                     <IconButton
-                      onClick={() => console.log("edit")}
-                      label="Edit"
+                      onClick={() => console.log("add")}
+                      label="Add"
                       noBorder
-                      icon={<Pencil />}
+                      icon={<Plus />}
                     />
-                    <Box paddingLeft={1}>
-                      <IconButton
-                        onClick={() => console.log("delete")}
-                        label="Delete"
-                        noBorder
-                        icon={<Trash />}
-                      />
-                    </Box>
-                  </Flex>
+                  )}
                 </Td>
               </Tr>
             );
