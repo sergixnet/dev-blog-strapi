@@ -3,7 +3,11 @@ import {
   Alert,
   BaseCheckbox,
   Box,
+  Flex,
+  IconButton,
+  IconButtonGroup,
   Loader,
+  Link,
   Table,
   Thead,
   Tbody,
@@ -12,7 +16,20 @@ import {
   Th,
   Typography,
 } from "@strapi/design-system";
+import { Pencil, Trash } from "@strapi/icons";
 import axios from "../utils/axiosInstance";
+
+interface RepoInterface {
+  id: number;
+  name: string;
+  shortDescription: string;
+  url: string;
+  projectId: number | null;
+}
+
+function truncate(str, n) {
+  return str.length > n ? str.slice(0, n - 1) + "..." : str;
+}
 
 const COL_COUNT = 5;
 
@@ -58,7 +75,7 @@ const Repo = () => {
 
   return (
     <Box padding={8} background="neutral100">
-      <Table colCount={COL_COUNT} rowCount={6}>
+      <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
             <Th>
@@ -78,6 +95,54 @@ const Repo = () => {
             </Th>
           </Tr>
         </Thead>
+        <Tbody>
+          {repos.map((repo) => {
+            console.log(repo);
+
+            const { id, name, shortDescription, url, projectId } = repo;
+
+            return (
+              <Tr key={id}>
+                <Td>
+                  <BaseCheckbox aria-label={`Select ${id}`} />
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{name}</Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">
+                    {shortDescription && truncate(shortDescription, 50)}
+                  </Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">
+                    <Link href={url} isExternal>
+                      {url}
+                    </Link>
+                  </Typography>
+                </Td>
+                <Td>
+                  <Flex>
+                    <IconButton
+                      onClick={() => console.log("edit")}
+                      label="Edit"
+                      noBorder
+                      icon={<Pencil />}
+                    />
+                    <Box paddingLeft={1}>
+                      <IconButton
+                        onClick={() => console.log("delete")}
+                        label="Delete"
+                        noBorder
+                        icon={<Trash />}
+                      />
+                    </Box>
+                  </Flex>
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
       </Table>
     </Box>
   );
