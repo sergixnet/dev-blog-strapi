@@ -39,6 +39,16 @@ const Repo = () => {
   const [error, setError] = useState({});
   const [selectedRepos, setSelectedRepos] = useState<number[]>([]);
 
+  const createProject = async (repo: RepoInterface) => {
+    try {
+      const response = await axios.post("/github-projects/project", repo);
+      console.log(response);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
 
@@ -80,8 +90,6 @@ const Repo = () => {
 
   if (loading) return <Loader style={loaderStyles} />;
 
-  console.log(repos);
-
   const allChecked = selectedRepos.length === repos.length;
   const isIndeterminate = selectedRepos.length > 0 && !allChecked; // some repo selected, but not all
 
@@ -120,8 +128,6 @@ const Repo = () => {
         </Thead>
         <Tbody>
           {repos.map((repo: RepoInterface) => {
-            console.log(repo);
-
             const { id, name, shortDescription, url, projectId } = repo;
 
             return (
@@ -178,7 +184,7 @@ const Repo = () => {
                     </Flex>
                   ) : (
                     <IconButton
-                      onClick={() => console.log("add")}
+                      onClick={() => createProject(repo)}
                       label="Add"
                       noBorder
                       icon={<Plus />}

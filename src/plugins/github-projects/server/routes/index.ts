@@ -1,11 +1,18 @@
 export default [
   {
     method: "GET",
-    path: "/repos", //
-    handler: "getReposController.index", // http://localhost:1337/github-projects/repos
+    path: "/repos", // http://localhost:1337/github-projects/repos
+    handler: "getReposController.index",
     config: {
-      policies: [],
-      auth: false, // TODO: change this to authorize only for admin panel users
+      policies: ["admin::isAuthenticatedAdmin"]
+    },
+  },
+  {
+    method: "POST",
+    path: "/project",
+    handler: "projectController.create",
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"]
     },
   },
 ];
