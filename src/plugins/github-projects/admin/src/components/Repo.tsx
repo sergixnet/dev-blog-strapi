@@ -36,7 +36,7 @@ const COL_COUNT = 5;
 const Repo = () => {
   const [repos, setRepos] = useState<RepoInterface[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState({});
+  // const [error, setError] = useState({});
   const [selectedRepos, setSelectedRepos] = useState<number[]>([]);
   const [alert, setAlert] = useState<
     { title: string; variant: string; message: string } | undefined
@@ -91,27 +91,17 @@ const Repo = () => {
         setRepos(data);
         setLoading(false);
       } catch (error) {
-        setError(error);
         console.log(error);
+        showAlert({
+          title: "Error fetching repositories",
+          message: error.toString(),
+          variant: "danger",
+        });
       }
     };
 
     fetchData();
   }, []);
-
-  if (Object.keys(error).length) {
-    console.log(error);
-
-    return (
-      <Alert
-        closeLabel="Close alert"
-        title="Error fetching repoitories"
-        variant="danger"
-      >
-        {error.toString()}
-      </Alert>
-    );
-  }
 
   const loaderStyles = {
     margin: "auto",
@@ -134,6 +124,9 @@ const Repo = () => {
             closeLabel="Close alert"
             title={alert.title}
             variant={alert.variant}
+            onClose={() => {
+              setAlert(undefined);
+            }}
           >
             {alert.message}
           </Alert>
