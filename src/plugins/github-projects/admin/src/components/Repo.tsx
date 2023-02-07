@@ -34,18 +34,51 @@ function truncate(str, n) {
 const COL_COUNT = 5;
 
 const Repo = () => {
-  const [repos, setRepos] = useState([]);
+  const [repos, setRepos] = useState<RepoInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
   const [selectedRepos, setSelectedRepos] = useState<number[]>([]);
+  const [alert, setAlert] = useState<
+    { title: string; variant: string; message: string } | undefined
+  >(undefined);
+
+  const showAlert = (alert) => {
+    setAlert(alert);
+
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 5000);
+  };
 
   const createProject = async (repo: RepoInterface) => {
     try {
       const response = await axios.post("/github-projects/project", repo);
-      console.log(response);
-      
+
+      if (response && response.data) {
+        setRepos(
+          repos.map((item: RepoInterface) =>
+            item.id !== repo.id
+              ? item
+              : {
+                  ...item,
+                  projectId: response.data.id,
+                }
+          )
+        );
+
+        showAlert({
+          title: "Project created",
+          message: `Succesfully created project ${response.data.title}`,
+          variant: "success",
+        });
+      }
     } catch (error) {
       console.log(error);
+      showAlert({
+        title: "An error ocurred",
+        message: "Error creating the project, please retry.",
+        variant: "danger",
+      });
     }
   };
 
@@ -95,6 +128,17 @@ const Repo = () => {
 
   return (
     <Box padding={8} background="neutral100">
+      {alert && (
+        <div style={{ position: "absolute", top: 0, left: "14%", zIndex: 10 }}>
+          <Alert
+            closeLabel="Close alert"
+            title={alert.title}
+            variant={alert.variant}
+          >
+            {alert.message}
+          </Alert>
+        </div>
+      )}
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
