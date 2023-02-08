@@ -5,7 +5,6 @@ import {
   Box,
   Flex,
   IconButton,
-  IconButtonGroup,
   Loader,
   Link,
   Table,
@@ -73,10 +72,43 @@ const Repo = () => {
         });
       }
     } catch (error) {
-      console.log(error);
       showAlert({
         title: "An error ocurred",
         message: "Error creating the project, please retry.",
+        variant: "danger",
+      });
+    }
+  };
+
+  const deleteProject = async (repo) => {
+    const { projectId } = repo;
+
+    try {
+      const response = await axios.delete(
+        `/github-projects/project/${projectId}`
+      );
+      if (response && response.data) {
+        setRepos(
+          repos.map((item: RepoInterface) =>
+            item.id !== repo.id
+              ? item
+              : {
+                  ...item,
+                  projectId: null,
+                }
+          )
+        );
+
+        showAlert({
+          title: "Project deleted",
+          message: `Succesfully deleted project ${response.data.title}`,
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      showAlert({
+        title: "An error ocurred",
+        message: "Error deleting the project, please retry.",
         variant: "danger",
       });
     }
@@ -212,7 +244,7 @@ const Repo = () => {
                       </Link>
                       <Box paddingLeft={1}>
                         <IconButton
-                          onClick={() => console.log("delete")}
+                          onClick={() => deleteProject(repo)}
                           label="Delete"
                           noBorder
                           icon={<Trash />}
