@@ -18,6 +18,8 @@ import {
 import { Pencil, Plus, Trash } from "@strapi/icons";
 import axios from "../utils/axiosInstance";
 
+import ConfirmationDialog from "./ConfirmationDialog";
+
 interface RepoInterface {
   id: number;
   name: string;
@@ -40,6 +42,7 @@ const Repo = () => {
   const [alert, setAlert] = useState<
     { title: string; variant: string; message: string } | undefined
   >(undefined);
+  const [deletingRepo, setDeletingRepo] = useState<RepoInterface | null>(null);
 
   const showAlert = (alert) => {
     setAlert(alert);
@@ -150,6 +153,14 @@ const Repo = () => {
 
   return (
     <Box padding={8} background="neutral100">
+      {deletingRepo && (
+        <ConfirmationDialog
+          visible={!!deletingRepo}
+          message="Are you sure you want to delete this project?"
+          onClose={() => setDeletingRepo(null)}
+          onConfirm={() => deleteProject(deletingRepo)}
+        />
+      )}
       {alert && (
         <div style={{ position: "absolute", top: 0, left: "14%", zIndex: 10 }}>
           <Alert
@@ -244,7 +255,7 @@ const Repo = () => {
                       </Link>
                       <Box paddingLeft={1}>
                         <IconButton
-                          onClick={() => deleteProject(repo)}
+                          onClick={() => setDeletingRepo(repo)}
                           label="Delete"
                           noBorder
                           icon={<Trash />}
