@@ -19,6 +19,7 @@ import { Pencil, Plus, Trash } from "@strapi/icons";
 import axios from "../utils/axiosInstance";
 
 import ConfirmationDialog from "./ConfirmationDialog";
+import BulkActions from "./BulkActions";
 
 interface RepoInterface {
   id: number;
@@ -37,7 +38,6 @@ const COL_COUNT = 5;
 const Repo = () => {
   const [repos, setRepos] = useState<RepoInterface[]>([]);
   const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState({});
   const [selectedRepos, setSelectedRepos] = useState<number[]>([]);
   const [alert, setAlert] = useState<
     { title: string; variant: string; message: string } | undefined
@@ -153,14 +153,6 @@ const Repo = () => {
 
   return (
     <Box padding={8} background="neutral100">
-      {deletingRepo && (
-        <ConfirmationDialog
-          visible={!!deletingRepo}
-          message="Are you sure you want to delete this project?"
-          onClose={() => setDeletingRepo(null)}
-          onConfirm={() => deleteProject(deletingRepo)}
-        />
-      )}
       {alert && (
         <div style={{ position: "absolute", top: 0, left: "14%", zIndex: 10 }}>
           <Alert
@@ -174,6 +166,13 @@ const Repo = () => {
             {alert.message}
           </Alert>
         </div>
+      )}
+      {selectedRepos.length && (
+        <BulkActions
+          selectedRepos={selectedRepos.map((repoId) =>
+            repos.find((repo) => repo.id === repoId)
+          )}
+        />
       )}
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
@@ -276,6 +275,14 @@ const Repo = () => {
           })}
         </Tbody>
       </Table>
+      {deletingRepo && (
+        <ConfirmationDialog
+          visible={!!deletingRepo}
+          message="Are you sure you want to delete this project?"
+          onClose={() => setDeletingRepo(null)}
+          onConfirm={() => deleteProject(deletingRepo)}
+        />
+      )}
     </Box>
   );
 };
