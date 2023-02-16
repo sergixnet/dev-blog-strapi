@@ -117,6 +117,44 @@ const Repo = () => {
     }
   };
 
+  const createAll = async (reposToBecomeProjects) => {
+    const response = await axios.post("/github-projects/projects", {
+      repos: reposToBecomeProjects,
+    });
+    if (
+      response &&
+      response.data &&
+      response.data.length === reposToBecomeProjects.length
+    ) {
+      setRepos(
+        repos.map((repo) => {
+          const relatedProjectJustCreated = response.data.find(
+            (project) => project.repositoryId === repo.id
+          );
+
+          return !repo.projectId && relatedProjectJustCreated
+            ? {
+                ...repo,
+                projectId: relatedProjectJustCreated.id,
+              }
+            : repo;
+        })
+      );
+
+      showAlert({
+        title: "Projects created",
+        message: `Succesfully created ${response.data.length} projects`,
+        variant: "success",
+      });
+    } else {
+      showAlert({
+        title: "An error ocurred",
+        message: `At leats one project wasn't created correctly. Please check and retry`,
+        variant: "danger",
+      });
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
 
@@ -172,6 +210,7 @@ const Repo = () => {
           selectedRepos={selectedRepos.map((repoId) =>
             repos.find((repo) => repo.id === repoId)
           )}
+          bulkCreateAction={createAll}
         />
       )}
       <Table colCount={COL_COUNT} rowCount={repos.length}>

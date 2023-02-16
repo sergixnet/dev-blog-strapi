@@ -23,4 +23,12 @@ export default [
       policies: ["admin::isAuthenticatedAdmin"]
     },
   },
+  {
+    method: "POST",
+    path: "/projects",
+    handler: "projectController.createAll",
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"]
+    },
+  },
 ];
