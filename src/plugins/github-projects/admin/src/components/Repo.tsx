@@ -129,7 +129,7 @@ const Repo = () => {
       setRepos(
         repos.map((repo) => {
           const relatedProjectJustCreated = response.data.find(
-            (project) => project.repositoryId === repo.id
+            (project) => project.repositoryId == repo.id
           );
 
           return !repo.projectId && relatedProjectJustCreated
@@ -153,6 +153,7 @@ const Repo = () => {
         variant: "danger",
       });
     }
+    setSelectedRepos([]);
   };
 
   useEffect(() => {
