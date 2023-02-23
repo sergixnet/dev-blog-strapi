@@ -149,7 +149,49 @@ const Repo = () => {
     } else {
       showAlert({
         title: "An error ocurred",
-        message: `At leats one project wasn't created correctly. Please check and retry`,
+        message: `At least one project wasn't created correctly. Please check and retry`,
+        variant: "danger",
+      });
+    }
+    setSelectedRepos([]);
+  };
+
+  const deleteAll = async (projectIds) => {
+    const response = await axios.delete("/github-projects/projects", {
+      params: {
+        projectIds,
+      },
+    });
+
+    if (
+      response &&
+      response.data &&
+      response.data.length == projectIds.length
+    ) {
+      setRepos(
+        repos.map((repo) => {
+          const relatedProjectJustDeleted = response.data.find(
+            (project) => project.repositoryId == repo.id
+          );
+
+          return repo.projectId && relatedProjectJustDeleted
+            ? {
+                ...repo,
+                projectId: null,
+              }
+            : repo;
+        })
+      );
+
+      showAlert({
+        title: "Projects deleted",
+        message: `Succesfully deleted ${response.data.length} projects`,
+        variant: "success",
+      });
+    } else {
+      showAlert({
+        title: "An error ocurred",
+        message: `At least one project wasn't deleted correctly. Please check and retry`,
         variant: "danger",
       });
     }
@@ -212,6 +254,7 @@ const Repo = () => {
             repos.find((repo) => repo.id === repoId)
           )}
           bulkCreateAction={createAll}
+          bulkDeleteAction={deleteAll}
         />
       )}
       <Table colCount={COL_COUNT} rowCount={repos.length}>

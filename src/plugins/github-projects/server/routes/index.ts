@@ -31,4 +31,12 @@ export default [
       policies: ["admin::isAuthenticatedAdmin"]
     },
   },
+  {
+    method: "DELETE",
+    path: "/projects",
+    handler: "projectController.deleteAll",
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"]
+    },
+  },
 ];

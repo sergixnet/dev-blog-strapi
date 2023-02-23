@@ -29,5 +29,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .service('projectService')
       .createAll(repos, ctx.state.user.id);
     return createdProjects;
+  },
+
+  async deleteAll(ctx) {
+    const { projectIds } = ctx.query;
+    const deletedProjects = await strapi
+      .plugin('github-projects')
+      .service('projectService')
+      .deleteAll(projectIds);
+    return deletedProjects;
   }
 });

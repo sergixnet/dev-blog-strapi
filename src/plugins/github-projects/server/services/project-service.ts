@@ -35,5 +35,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     );
 
     return Promise.all(createPromises);
+  },
+
+  async deleteAll(projectIds) {
+    const deletePromises = projectIds.map(async (id) => await strapi
+      .plugin('github-projects')
+      .service('projectService')
+      .delete(id)
+    );
+
+    return Promise.all(deletePromises);
   }
 })
