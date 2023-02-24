@@ -118,84 +118,90 @@ const Repo = () => {
   };
 
   const createAll = async (reposToBecomeProjects) => {
-    const response = await axios.post("/github-projects/projects", {
-      repos: reposToBecomeProjects,
-    });
-    if (
-      response &&
-      response.data &&
-      response.data.length === reposToBecomeProjects.length
-    ) {
-      setRepos(
-        repos.map((repo) => {
-          const relatedProjectJustCreated = response.data.find(
-            (project) => project.repositoryId == repo.id
-          );
-
-          return !repo.projectId && relatedProjectJustCreated
-            ? {
-                ...repo,
-                projectId: relatedProjectJustCreated.id,
-              }
-            : repo;
-        })
-      );
-
-      showAlert({
-        title: "Projects created",
-        message: `Succesfully created ${response.data.length} projects`,
-        variant: "success",
+    try {
+      const response = await axios.post("/github-projects/projects", {
+        repos: reposToBecomeProjects,
       });
-    } else {
+      if (
+        response &&
+        response.data &&
+        response.data.length === reposToBecomeProjects.length
+      ) {
+        setRepos(
+          repos.map((repo) => {
+            const relatedProjectJustCreated = response.data.find(
+              (project) => project.repositoryId == repo.id
+            );
+
+            return !repo.projectId && relatedProjectJustCreated
+              ? {
+                  ...repo,
+                  projectId: relatedProjectJustCreated.id,
+                }
+              : repo;
+          })
+        );
+
+        showAlert({
+          title: "Projects created",
+          message: `Succesfully created ${response.data.length} projects`,
+          variant: "success",
+        });
+      }
+    } catch (error) {
       showAlert({
         title: "An error ocurred",
         message: `At least one project wasn't created correctly. Please check and retry`,
         variant: "danger",
       });
+    } finally {
+      setSelectedRepos([]);
     }
-    setSelectedRepos([]);
   };
 
   const deleteAll = async (projectIds) => {
-    const response = await axios.delete("/github-projects/projects", {
-      params: {
-        projectIds,
-      },
-    });
-
-    if (
-      response &&
-      response.data &&
-      response.data.length == projectIds.length
-    ) {
-      setRepos(
-        repos.map((repo) => {
-          const relatedProjectJustDeleted = response.data.find(
-            (project) => project.repositoryId == repo.id
-          );
-
-          return repo.projectId && relatedProjectJustDeleted
-            ? {
-                ...repo,
-                projectId: null,
-              }
-            : repo;
-        })
-      );
-
-      showAlert({
-        title: "Projects deleted",
-        message: `Succesfully deleted ${response.data.length} projects`,
-        variant: "success",
+    try {
+      const response = await axios.delete("/github-projects/projects", {
+        params: {
+          projectIds,
+        },
       });
-    } else {
+
+      if (
+        response &&
+        response.data &&
+        response.data.length == projectIds.length
+      ) {
+        setRepos(
+          repos.map((repo) => {
+            const relatedProjectJustDeleted = response.data.find(
+              (project) => project.repositoryId == repo.id
+            );
+
+            return repo.projectId && relatedProjectJustDeleted
+              ? {
+                  ...repo,
+                  projectId: null,
+                }
+              : repo;
+          })
+        );
+
+        showAlert({
+          title: "Projects deleted",
+          message: `Succesfully deleted ${response.data.length} projects`,
+          variant: "success",
+        });
+      }
+    } catch (error) {
       showAlert({
         title: "An error ocurred",
         message: `At least one project wasn't deleted correctly. Please check and retry`,
         variant: "danger",
       });
+    } finally {
+      setSelectedRepos([]);
     }
-    setSelectedRepos([]);
   };
 
   useEffect(() => {

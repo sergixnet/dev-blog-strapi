@@ -25,10 +25,10 @@ export default {
       },
       permissions: [
         // Uncomment to set the permissions of the plugin here
-        {
-          action: "plugin::github-projects.use", // the action name should be plugin::plugin-name.actionType
-          subject: null,
-        },
+        // {
+        //   action: "plugin::github-projects.use", // the action name should be plugin::plugin-name.actionType
+        //   subject: null,
+        // },
       ],
     });
     const plugin = {
