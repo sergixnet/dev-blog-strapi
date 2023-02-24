@@ -1,5 +1,16 @@
-import { Strapi } from '@strapi/strapi';
+import { Strapi } from "@strapi/strapi";
 
-export default ({ strapi }: { strapi: Strapi }) => {
-  // bootstrap phase
+const RBAC_ACTIONS = [
+  {
+    section: "plugins",
+    displayName: "View and access the plugin",
+    uid: "use",
+    pluginName: "github-projects",
+  },
+];
+
+export default async ({ strapi }) => {
+  await strapi.admin.services.permission.conditionProvider.registerMany(
+    RBAC_ACTIONS
+  );
 };
